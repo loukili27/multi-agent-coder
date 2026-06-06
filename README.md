@@ -17,19 +17,7 @@ The future of software development isn't just about single-prompt generation; it
 - **Flexible Stack Selection**: Built-in selectors for Languages, Frameworks, and Project Types to guide the generation process.
 
 ## 🖼️ Screenshots
-
-### Main Dashboard
-![Dashboard](docs/images/dashboard.png)
-
-### Agent Workflow
-![Workflow](docs/images/workflow.png)
-
-### Iterative Refinement
-![Refinement](docs/images/refinement.png)
-
-### Suggested Improvements
-![Suggestions](docs/images/suggestions.png)
-
+Screenshots will be added after the first public release.
 ## 🏗️ Architecture Overview
 Multi-Agent Coder is built on a modern, decoupled architecture:
 - **Backend**: FastAPI (Python) with a custom Orchestration layer and Pydantic-based Shared Memory.
