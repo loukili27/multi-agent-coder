@@ -1,5 +1,5 @@
-import React from 'react';
-import { User, Bot, Terminal, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { User, Terminal, ShieldCheck, Code, Brain } from 'lucide-react';
 
 interface LogEntry {
   agent: string;
@@ -12,36 +12,108 @@ interface LogViewerProps {
 }
 
 const LogViewer: React.FC<LogViewerProps> = ({ logs }) => {
-  const getIcon = (agent: string) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  const getAgentConfig = (agent: string) => {
     switch (agent) {
-      case 'Architect': return <ShieldCheck className="w-5 h-5 text-blue-400" />;
-      case 'Developer': return <Terminal className="w-5 h-5 text-green-400" />;
-      case 'Reviewer': return <Bot className="w-5 h-5 text-purple-400" />;
-      case 'System': return <Terminal className="w-5 h-5 text-yellow-400" />;
-      default: return <User className="w-5 h-5 text-slate-400" />;
+      case 'Architect': 
+        return { 
+          icon: <Brain className="w-4 h-4" />, 
+          color: 'text-purple-400', 
+          bg: 'bg-purple-400/10',
+          border: 'border-purple-400/20',
+          label: 'Architect'
+        };
+      case 'Developer': 
+        return { 
+          icon: <Code className="w-4 h-4" />, 
+          color: 'text-green-400', 
+          bg: 'bg-green-400/10',
+          border: 'border-green-400/20',
+          label: 'Developer'
+        };
+      case 'Reviewer': 
+        return { 
+          icon: <ShieldCheck className="w-4 h-4" />, 
+          color: 'text-blue-400', 
+          bg: 'bg-blue-400/10',
+          border: 'border-blue-400/20',
+          label: 'Reviewer'
+        };
+      case 'System': 
+        return { 
+          icon: <Terminal className="w-4 h-4" />, 
+          color: 'text-yellow-400', 
+          bg: 'bg-yellow-400/10',
+          border: 'border-yellow-400/20',
+          label: 'System'
+        };
+      case 'User': 
+        return { 
+          icon: <User className="w-4 h-4" />, 
+          color: 'text-slate-200', 
+          bg: 'bg-slate-700',
+          border: 'border-slate-600',
+          label: 'You'
+        };
+      default: 
+        return { 
+          icon: <Terminal className="w-4 h-4" />, 
+          color: 'text-slate-400', 
+          bg: 'bg-slate-800',
+          border: 'border-slate-700',
+          label: agent 
+        };
     }
   };
 
   return (
-    <div className="flex flex-col gap-4 overflow-y-auto max-h-[600px] p-4 bg-slate-800/50 rounded-xl border border-slate-700">
-      {logs.map((log, index) => (
-        <div key={index} className={`flex flex-col ${log.agent === 'User' ? 'items-end' : 'items-start'}`}>
-          <div className="flex items-center gap-2 mb-1 px-2">
-            {getIcon(log.agent)}
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{log.agent}</span>
+    <div 
+      ref={scrollRef}
+      className="flex-1 flex flex-col gap-4 overflow-y-auto p-4 bg-slate-900/50 rounded-xl border border-slate-800 scroll-smooth"
+    >
+      {logs.map((log, index) => {
+        const config = getAgentConfig(log.agent);
+        const isUser = log.agent === 'User';
+        const isSystem = log.agent === 'System';
+
+        return (
+          <div key={index} className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+            <div className={`flex items-center gap-2 mb-1.5 px-1 ${isUser ? 'flex-row-reverse' : ''}`}>
+              <div className={`p-1 rounded-md ${config.bg} ${config.color} border ${config.border}`}>
+                {config.icon}
+              </div>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{config.label}</span>
+            </div>
+            
+            <div className={`max-w-[92%] p-3.5 rounded-2xl text-[13px] leading-relaxed shadow-sm ${
+              isSystem ? 'bg-slate-800/40 border border-slate-700/50 text-slate-400 italic' :
+              isUser ? 'bg-blue-600 text-white shadow-blue-900/20' :
+              `bg-slate-800 border border-slate-700 text-slate-200 ${config.border}`
+            }`}>
+              {log.type === 'code' ? (
+                <div className="flex items-center gap-2 text-green-400">
+                  <Code className="w-4 h-4" />
+                  <span>Generated new code for {log.agent}</span>
+                </div>
+              ) : (
+                <div className="whitespace-pre-wrap">{log.content}</div>
+              )}
+            </div>
           </div>
-          <div className={`max-w-[90%] p-3 rounded-2xl text-sm ${
-            log.agent === 'System' ? 'bg-slate-800 border border-slate-700 text-slate-400 italic' :
-            log.agent === 'User' ? 'bg-blue-600 text-white' :
-            'bg-slate-700 text-slate-200'
-          }`}>
-            {log.type === 'code' ? 'Generated new code (see panel)' : log.content}
-          </div>
-        </div>
-      ))}
+        );
+      })}
+      
       {logs.length === 0 && (
-        <div className="text-center py-20 text-slate-500 italic">
-          No activity yet. Start a new project to see the agents in action.
+        <div className="flex-1 flex flex-col items-center justify-center text-slate-600 gap-3 opacity-40">
+          <Brain className="w-12 h-12" />
+          <p className="text-sm italic font-medium">Ready to assist. Select a stack and describe your task.</p>
         </div>
       )}
     </div>

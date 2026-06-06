@@ -33,7 +33,6 @@ __pycache__/
 *.sw?
 
 # Docs ignored for now
-ABOUT.md
-DOCUMENTATION.md
 models_list.txt
-test_app.py
+test_app.pytest_openrouter.py
+test_openrouter.py
