@@ -26,6 +26,14 @@ function App() {
   const [progressStep, setProgressStep] = useState(0);
   const [progressLabel, setProgressLabel] = useState('');
   const ws = useRef<WebSocket | null>(null);
+  const promptRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (promptRef.current) {
+      promptRef.current.style.height = 'auto';
+      promptRef.current.style.height = `${Math.min(promptRef.current.scrollHeight, 200)}px`;
+    }
+  }, [prompt]);
 
   const connect = useCallback(function connect() {
     console.log("Connecting to WebSocket...");
@@ -105,8 +113,8 @@ function App() {
     setProgressLabel('Cancelled');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent | React.KeyboardEvent) => {
+    e?.preventDefault();
     if (!prompt.trim() || isProcessing || !isConnected) return;
 
     const currentPrompt = prompt;
@@ -133,6 +141,13 @@ function App() {
       setLogs(prev => [...prev, { agent: 'System', content: 'Error: Failed to send request to backend.', type: 'system' }]);
       setIsProcessing(false);
       setProgressStep(0);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      handleSubmit(e);
     }
   };
 
@@ -228,15 +243,16 @@ function App() {
               
               <div className="flex flex-col sm:flex-row gap-4 items-end">
                 <div className="flex-1 relative w-full">
-                  <input
-                    type="text"
+                  <textarea
+                    ref={promptRef}
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder={isConnected ? "What would you like to build?" : "Offline..."}
                     disabled={isProcessing || !isConnected}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3.5 pr-24 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 text-sm"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3.5 pr-24 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 text-sm resize-none min-h-[52px] block"
                   />
-                  <div className="absolute right-2 top-2 flex gap-2">
+                  <div className="absolute right-2 bottom-2 flex gap-2">
                     {isProcessing && (
                       <button
                         type="button"
