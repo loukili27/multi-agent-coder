@@ -51,9 +51,6 @@ The current version focuses on:
 - **Application Assembly**: The platform focuses on code generation rather than complete end-to-end application assembly.
 
 ## 🖼️ Screenshots
-<<<<<<< HEAD
-Screenshots will be added after the first public release.
-=======
 
 ### Dashboard
 The main command center where project parameters are defined and code is rendered.
