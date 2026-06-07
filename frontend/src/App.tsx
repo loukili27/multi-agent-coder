@@ -5,6 +5,7 @@ import CodeDisplay from './components/CodeDisplay';
 import ProgressBar from './components/ProgressBar';
 import StackSelector from './components/StackSelector';
 import SuggestionsPanel from './components/SuggestionsPanel';
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://127.0.0.1:8000/ws/orchestrator';
 
 interface LogEntry {
   agent: string;
@@ -37,7 +38,9 @@ function App() {
 
   const connect = useCallback(function connect() {
     console.log("Connecting to WebSocket...");
-    const socket = new WebSocket('ws://127.0.0.1:8000/ws/orchestrator');
+  
+
+  const socket = new WebSocket(WS_URL);
     ws.current = socket;
     
     socket.onopen = () => {
