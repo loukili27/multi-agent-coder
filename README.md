@@ -85,7 +85,6 @@ Evolve your implementation through user-guided feedback loops.
 4. **Reviewer**: Checks for potential race conditions or missing imports.
 5. **Refinement**: User asks to "Add a method for connection pooling," and the system updates the existing script accordingly.
 
->>>>>>> 85c8f8e (docs: improve README, screenshots and project documentation)
 ## 🏗️ Architecture Overview
 - **Backend**: FastAPI (Python) for the orchestration layer, utilizing WebSockets for real-time communication.
 - **Frontend**: React (TypeScript) + Vite, featuring a responsive glassmorphism UI.
